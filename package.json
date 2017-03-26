@@ -1,0 +1,19 @@
+{
+  "name": "1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sketch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zhangyang",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asdf6773/TERMINUS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/asdf6773/TERMINUS/issues"
+  },
+  "homepage": "https://github.com/asdf6773/TERMINUS#readme"
+}
