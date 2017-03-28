@@ -175,6 +175,8 @@ geometry.setDrawRange(0, drawCount);
 var cameraZ = 0;
 //--------------------------renderer-----------------------
 function update() { ///////why vector can't use=?
+mouse.x = 200 * Math.random();
+mouse.y =200 * Math.random();
     mouseV.x = mouse.x;
     mouseV.y = mouse.y;
     mouseV.z = mouse.z;
