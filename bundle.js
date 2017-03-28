@@ -44,11 +44,14 @@ window.show_coords = function(event) {
     mouse.z = 200 * Math.random() - 100;
     //  console.log(x + ' ' + y);
 }
+
 var $ = require('jquery');
 var Particle = require('./particles.js');
 $("body").on("touchmove", show_coords);
 $("body").on("touchstart", show_coords);
-
+$("body").on("touchmmove",function(event){//移动端禁用滚动条
+event.preventDefault();
+},false)
 //var THREE = require('three');
 var vShader = $('#vertexshader');
 var fShader = $('#fragmentshader');
