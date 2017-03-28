@@ -1,6 +1,205 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+function Particle() {
+    //   var acc, pos, frc;
+    this.radius = 500;
+    //   this.theta = Math.PI * Math.random() - Math.PI / 2;
+    //   this.phi = 2 * Math.PI * Math.random();
+    //   this.x = Math.cos(this.theta) * Math.cos(this.phi) * this.radius;
+    //   this.y = Math.sin(this.theta) * this.radius;
+    //   this.z = Math.sin(this.phi) * Math.cos(this.theta) * this.radius;
+    this.x = this.radius * Math.random() - this.radius / 2;
+    this.y = this.radius * Math.random() - this.radius / 2;
+    this.z = this.radius * Math.random() - this.radius / 2
+
+    this.temp = new THREE.Vector3(this.x, this.y, this.z);
+
+    if (this.temp.length() < this.radius/2) {
+
+        this.pos = new THREE.Vector3(this.x, this.y, this.z);
+    } else {
+
+        this.pos = new THREE.Vector3(this.x / 10, this.y / 10, this.z / 10);
+    }
+
+
+
+    //  this.pos = new THREE.Vector3(0, 0, 0);
+    this.vel = new THREE.Vector3(0, 0, 0);
+    this.acc = new THREE.Vector3(0, 0, 0);
+    this.update = function() {
+        this.vel.addVectors(this.vel, this.acc);
+        this.pos.addVectors(this.pos, this.vel);
+        this.acc.multiplyScalar(0);
+    }
+}
+module.exports = Particle;
+},{}],2:[function(require,module,exports){
+//var camera = new THREE.OrthographicCamera(innerWidth / -2, innerWidth, innerHeight / 2, innerHeight / -2,1,1000) ////1
+window.show_coords = function(event) {
+    //<body onmousemove ="show_coords(event)">
+    x = event.clientX;
+    y = event.clientY;
+    mouse.x = x - innerWidth / 2;
+    mouse.y = -y + innerHeight / 2;
+    mouse.z = 200 * Math.random() - 100;
+    //  console.log(x + ' ' + y);
+}
+var $ = require('jquery');
+var Particle = require('./particles.js');
+$("body").on("touchmove", show_coords);
+
+//var THREE = require('three');
+var vShader = $('#vertexshader');
+var fShader = $('#fragmentshader');
+var fShaderforline = $('#fragmentshaderforline');
+var uniforms = {
+    amplitude: {
+        type: 'float',
+        value: 0
+    },
+    mouse: {
+        type: 'vec2',
+        value: new THREE.Vector2(0, 0)
+    },
+    seed: {
+        type: 'float',
+        value: 0.001
+    }
+}
+var shaderMaterial = new THREE.ShaderMaterial({ //6
+    uniforms: uniforms,
+    vertexShader: vShader.text(),
+    fragmentShader: fShader.text()
+});
+var shaderMaterialForLine = new THREE.ShaderMaterial({ //6
+    uniforms: uniforms,
+    vertexShader: vShader.text(),
+    fragmentShader: fShaderforline.text()
+});
+var camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 10000) ////1
+camera.position.set(0, 0, 600);
+
+var scene = new THREE.Scene(); //2
+var light = new THREE.PointLight(0xffffff, 1, 500);
+light.position.set(0, 0, 0);
+scene.add(light);
+var renderer = new THREE.WebGLRenderer();
+scene.add(camera);
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+const RADIUS = 50;
+const SEGMENTS = 10;
+const RINGS = 10;
+var particles = [];
+var MAX_POINTS = 20000;
+for (var i = 0; i < MAX_POINTS; i++) {
+    particles.push(new Particle());
+}
+var pMouseV = new THREE.Vector3(0.0, 0.0, 0.0);
+var mouse = new THREE.Vector3(0.0, 0.0, 0.0);
+
+var mouseV = new THREE.Vector3(0.0, 0.0, 0.0);
+var dx = new THREE.Vector3(0.0, 0.0, 0.0);
+
+var frame = 0;
+var seed = 588.0; //
+var pushRad = 10;
+
+var geometry = new THREE.BufferGeometry();
+var positions = new Float32Array(MAX_POINTS * 3);
+var attrib = new THREE.BufferAttribute(positions, 3);
+geometry.addAttribute('position', attrib);
+
+
+shaderMaterialForLine.transparent = true;
+shaderMaterial.transparent = true;
+
+var line = new THREE.Line(geometry, shaderMaterialForLine);
+var point = new THREE.Points(geometry, shaderMaterial);
+scene.add(line);
+scene.add(point);
+//console.log(line.geometry.attributes.position.needsUpdate);
+//console.log(line.material);
+positions = line.geometry.attributes.position.array;
+var x = y = z = index = 0;
+for (var i = 0, l = MAX_POINTS; i < l; i++) {
+    //    opacity[i] = 0.5;
+    positions[index++] = particles[i].pos.x;
+    positions[index++] = particles[i].pos.y;
+    positions[index++] = particles[i].pos.z;
+}
+var n = 0;
+// draw range
+drawCount = 1000; // draw the first 2 points, only
+geometry.setDrawRange(0, drawCount);
+
+var cameraZ = 0;
+//--------------------------renderer-----------------------
+function update() { ///////why vector can't use=?
+    mouseV.x = mouse.x;
+    mouseV.y = mouse.y;
+    mouseV.z = mouse.z;
+    //  n = noise(frame);
+    //  console.log(particles[0].pos);
+    for (var i = 0; i < particles.length; i++) {
+        //  var mouseTemp = mouseV;
+        var A = particles[i];
+        dx = new THREE.Vector3().subVectors(A.pos, pMouseV);
+        if (Math.abs(dx.x) < pushRad) {
+            if (Math.abs(dx.y) < pushRad) {
+                if (dx.length() < pushRad) {
+                    //dx.normalize();
+                    // A.f.add(PVector.mult(dx, 0.8));
+                    //var temp = new THREE.Vector3().
+                    //subVectors(mouseV, pMouseV);
+                    //temp.subVectors(temp, A.vel);
+                    //temp.multiplyScalar(1.5);
+                    //A.vel.addVectors(A.vel, temp);
+                    mouseV.sub(pMouseV);
+                    mouseV.sub(A.vel);
+                    mouseV.multiplyScalar(0.3);
+                    A.vel.add(mouseV);
+                }
+            }
+        }
+        A.update();
+    }
+    index = 0;
+
+    //  console.log(mouseV);
+    camera.position.set(600 * Math.cos(frame), 0, 600 * Math.sin(frame));
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    cameraZ += 1;
+    for (var i = 0, l = MAX_POINTS; i < l; i++) {
+        positions[index++] = particles[i].pos.x;
+        positions[index++] = particles[i].pos.y;
+        positions[index++] = particles[i].pos.z;
+
+    }
+
+    //    material.color = new THREE.Color(Math.random(), Math.random(), Math.random());
+
+
+
+    //  console.log(line.material);
+
+    geometry.attributes.position.needsUpdate = true;
+    geometry.setDrawRange(0, MAX_POINTS);
+    pMouseV.x = mouseV.x;
+    pMouseV.y = mouseV.y;
+    pMouseV.z = mouseV.z;
+    renderer.render(scene, camera);
+    requestAnimationFrame(update);
+    frame += 0.001;
+    //console.log(mouse.x+' '+mouse.y);
+    //i = 0;
+}
+
+requestAnimationFrame(update);
+
+},{"./particles.js":1,"jquery":3}],3:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v3.2.1
+ * jQuery JavaScript Library v3.2.0
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -10,7 +209,7 @@
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2017-03-20T18:59Z
+ * Date: 2017-03-16T21:26Z
  */
 ( function( global, factory ) {
 
@@ -89,7 +288,7 @@ var support = {};
 
 
 var
-	version = "3.2.1",
+	version = "3.2.0",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -5344,9 +5543,11 @@ jQuery.event = {
 		},
 		click: {
 
-			// For checkbox, fire native event so checked state will be right
+			// For checkable types, fire native event so checked state will be right
 			trigger: function() {
-				if ( this.type === "checkbox" && this.click && nodeName( this, "input" ) ) {
+				if ( rcheckableType.test( this.type ) &&
+					this.click && nodeName( this, "input" ) ) {
+
 					this.click();
 					return false;
 				}
@@ -6166,11 +6367,6 @@ var getStyles = function( elem ) {
 
 function curCSS( elem, name, computed ) {
 	var width, minWidth, maxWidth, ret,
-
-		// Support: Firefox 51+
-		// Retrieving style before computed somehow
-		// fixes an issue with getting wrong values
-		// on detached elements
 		style = elem.style;
 
 	computed = computed || getStyles( elem );
@@ -6358,12 +6554,6 @@ function getWidthOrHeight( elem, name, extra ) {
 	// for getComputedStyle silently falls back to the reliable elem.style
 	valueIsBorderBox = isBorderBox &&
 		( support.boxSizingReliable() || val === elem.style[ name ] );
-
-	// Fall back to offsetWidth/Height when value is "auto"
-	// This happens for inline elements with no explicit setting (gh-3571)
-	if ( val === "auto" ) {
-		val = elem[ "offset" + name[ 0 ].toUpperCase() + name.slice( 1 ) ];
-	}
 
 	// Normalize "", auto, and prepare for extra
 	val = parseFloat( val ) || 0;
@@ -10181,16 +10371,16 @@ jQuery.fn.extend( {
 		return arguments.length === 1 ?
 			this.off( selector, "**" ) :
 			this.off( types, selector || "**", fn );
+	},
+	holdReady: function( hold ) {
+		if ( hold ) {
+			jQuery.readyWait++;
+		} else {
+			jQuery.ready( true );
+		}
 	}
 } );
 
-jQuery.holdReady = function( hold ) {
-	if ( hold ) {
-		jQuery.readyWait++;
-	} else {
-		jQuery.ready( true );
-	}
-};
 jQuery.isArray = Array.isArray;
 jQuery.parseJSON = JSON.parse;
 jQuery.nodeName = nodeName;
@@ -10253,200 +10443,4 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],2:[function(require,module,exports){
-function Particle() {
-    //   var acc, pos, frc;
-    this.radius = 500;
-    //   this.theta = Math.PI * Math.random() - Math.PI / 2;
-    //   this.phi = 2 * Math.PI * Math.random();
-    //   this.x = Math.cos(this.theta) * Math.cos(this.phi) * this.radius;
-    //   this.y = Math.sin(this.theta) * this.radius;
-    //   this.z = Math.sin(this.phi) * Math.cos(this.theta) * this.radius;
-    this.x = this.radius * Math.random() - this.radius / 2;
-    this.y = this.radius * Math.random() - this.radius / 2;
-    this.z = this.radius * Math.random() - this.radius / 2
-
-    this.temp = new THREE.Vector3(this.x, this.y, this.z);
-
-    if (this.temp.length() < this.radius/2) {
-
-        this.pos = new THREE.Vector3(this.x, this.y, this.z);
-    } else {
-
-        this.pos = new THREE.Vector3(this.x / 10, this.y / 10, this.z / 10);
-    }
-
-
-
-    //  this.pos = new THREE.Vector3(0, 0, 0);
-    this.vel = new THREE.Vector3(0, 0, 0);
-    this.acc = new THREE.Vector3(0, 0, 0);
-    this.update = function() {
-        this.vel.addVectors(this.vel, this.acc);
-        this.pos.addVectors(this.pos, this.vel);
-        this.acc.multiplyScalar(0);
-    }
-}
-module.exports = Particle;
-},{}],3:[function(require,module,exports){
-//var camera = new THREE.OrthographicCamera(innerWidth / -2, innerWidth, innerHeight / 2, innerHeight / -2,1,1000) ////1
-var $ = require('jquery');
-var Particle = require('./particles.js');
-//var THREE = require('three');
-var vShader = $('#vertexshader');
-var fShader = $('#fragmentshader');
-var fShaderforline = $('#fragmentshaderforline');
-var uniforms = {
-    amplitude: {
-        type: 'float',
-        value: 0
-    },
-    mouse: {
-        type: 'vec2',
-        value: new THREE.Vector2(0, 0)
-    },
-    seed: {
-        type: 'float',
-        value: 0.001
-    }
-}
-var shaderMaterial = new THREE.ShaderMaterial({ //6
-    uniforms: uniforms,
-    vertexShader: vShader.text(),
-    fragmentShader: fShader.text()
-});
-var shaderMaterialForLine = new THREE.ShaderMaterial({ //6
-    uniforms: uniforms,
-    vertexShader: vShader.text(),
-    fragmentShader: fShaderforline.text()
-});
-var camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 10000) ////1
-camera.position.set(0, 0, 600);
-
-var scene = new THREE.Scene(); //2
-var light = new THREE.PointLight(0xffffff, 1, 500);
-light.position.set(0, 0, 0);
-scene.add(light);
-var renderer = new THREE.WebGLRenderer();
-scene.add(camera);
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-const RADIUS = 50;
-const SEGMENTS = 10;
-const RINGS = 10;
-var particles = [];
-var MAX_POINTS =20000  ;
-for (var i = 0; i < MAX_POINTS; i++) {
-    particles.push(new Particle());
-}
-var pMouseV = new THREE.Vector3(0.0, 0.0, 0.0);
-  var mouse = new THREE.Vector3(0.0, 0.0, 0.0);
-window.show_coords=function(event) {
-    //<body onmousemove ="show_coords(event)">
-    x = event.clientX;
-    y = event.clientY;
-    mouse.x = x-innerWidth/2;
-    mouse.y = -y+innerHeight/2;
-    mouse.z = 200*Math.random()-100;
-  //  console.log(x + ' ' + y);
-    }
-var mouseV = new THREE.Vector3(0.0, 0.0, 0.0);
-var dx = new THREE.Vector3(0.0, 0.0, 0.0);
-
-var frame = 0;
-var seed = 588.0; //
-var pushRad = 10;
-
-var geometry = new THREE.BufferGeometry();
-var positions = new Float32Array(MAX_POINTS * 3);
-var attrib = new THREE.BufferAttribute(positions, 3);
-geometry.addAttribute('position', attrib);
-
-
-shaderMaterialForLine.transparent=true;
-shaderMaterial.transparent=true;
-
-var line = new THREE.Line(geometry, shaderMaterialForLine);
-var point = new THREE.Points(geometry, shaderMaterial);
-scene.add(line);
-scene.add(point);
-//console.log(line.geometry.attributes.position.needsUpdate);
-//console.log(line.material);
-positions = line.geometry.attributes.position.array;
-var x = y = z = index = 0;
-for (var i = 0, l = MAX_POINTS; i < l; i++) {
-    //    opacity[i] = 0.5;
-    positions[index++] = particles[i].pos.x;
-    positions[index++] = particles[i].pos.y;
-    positions[index++] = particles[i].pos.z;
-}
-var n = 0;
-// draw range
-drawCount = 1000; // draw the first 2 points, only
-geometry.setDrawRange(0, drawCount);
-
-var cameraZ = 0;
-//--------------------------renderer-----------------------
-function update() { ///////why vector can't use=?
-    mouseV.x = mouse.x;
-    mouseV.y = mouse.y;
-    mouseV.z = mouse.z;
-  //  n = noise(frame);
-    //  console.log(particles[0].pos);
-    for (var i = 0; i < particles.length; i++) {
-        //  var mouseTemp = mouseV;
-        var A = particles[i];
-        dx = new THREE.Vector3().subVectors(A.pos, pMouseV);
-        if (Math.abs(dx.x) < pushRad) {
-            if (Math.abs(dx.y) < pushRad) {
-                if (dx.length() < pushRad) {
-                    //dx.normalize();
-                    // A.f.add(PVector.mult(dx, 0.8));
-                    //var temp = new THREE.Vector3().
-                    //subVectors(mouseV, pMouseV);
-                    //temp.subVectors(temp, A.vel);
-                    //temp.multiplyScalar(1.5);
-                    //A.vel.addVectors(A.vel, temp);
-                    mouseV.sub(pMouseV);
-                    mouseV.sub(A.vel);
-                    mouseV.multiplyScalar(0.3);
-                    A.vel.add(mouseV);
-                }
-            }
-        }
-        A.update();
-    }
-    index = 0;
-
-    //  console.log(mouseV);
-    camera.position.set(600 * Math.cos(frame), 0, 600 * Math.sin(frame));
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
-    cameraZ += 1;
-    for (var i = 0, l = MAX_POINTS; i < l; i++) {
-        positions[index++] = particles[i].pos.x;
-        positions[index++] = particles[i].pos.y;
-        positions[index++] = particles[i].pos.z;
-
-    }
-
-    //    material.color = new THREE.Color(Math.random(), Math.random(), Math.random());
-
-
-
-    //  console.log(line.material);
-
-    geometry.attributes.position.needsUpdate = true;
-    geometry.setDrawRange(0, MAX_POINTS);
-    pMouseV.x = mouseV.x;
-    pMouseV.y = mouseV.y;
-    pMouseV.z = mouseV.z;
-    renderer.render(scene, camera);
-    requestAnimationFrame(update);
-    frame += 0.001;
-   //console.log(mouse.x+' '+mouse.y);
-    //i = 0;
-}
-
-requestAnimationFrame(update);
-
-},{"./particles.js":2,"jquery":1}]},{},[3]);
+},{}]},{},[2]);

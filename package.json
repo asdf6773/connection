@@ -4,7 +4,8 @@
   "description": "",
   "main": "sketch.js",
   "scripts": {
-    "build": "browserify sketch.js -o bundle.js"
+    "build": "browserify sketch.js -o bundle.js",
+          "watch": "watchify sketch.js -o bundle.js"
   },
   "author": "zhangyang",
   "license": "ISC",
@@ -19,6 +20,7 @@
   "dependencies": {
     "browserify": "^14.1.0",
     "jquery": "^3.2.1",
-    "three.js": "^0.77.1"
+    "three.js": "^0.77.1",
+    "watchify": "^3.9.0"
   }
 }

@@ -1,6 +1,17 @@
 //var camera = new THREE.OrthographicCamera(innerWidth / -2, innerWidth, innerHeight / 2, innerHeight / -2,1,1000) ////1
+window.show_coords = function(event) {
+    //<body onmousemove ="show_coords(event)">
+    x = event.clientX;
+    y = event.clientY;
+    mouse.x = x - innerWidth / 2;
+    mouse.y = -y + innerHeight / 2;
+    mouse.z = 200 * Math.random() - 100;
+    //  console.log(x + ' ' + y);
+}
 var $ = require('jquery');
 var Particle = require('./particles.js');
+$("body").on("touchmove", show_coords);
+
 //var THREE = require('three');
 var vShader = $('#vertexshader');
 var fShader = $('#fragmentshader');
@@ -44,21 +55,13 @@ const RADIUS = 50;
 const SEGMENTS = 10;
 const RINGS = 10;
 var particles = [];
-var MAX_POINTS =20000  ;
+var MAX_POINTS = 20000;
 for (var i = 0; i < MAX_POINTS; i++) {
     particles.push(new Particle());
 }
 var pMouseV = new THREE.Vector3(0.0, 0.0, 0.0);
-  var mouse = new THREE.Vector3(0.0, 0.0, 0.0);
-window.show_coords=function(event) {
-    //<body onmousemove ="show_coords(event)">
-    x = event.clientX;
-    y = event.clientY;
-    mouse.x = x-innerWidth/2;
-    mouse.y = -y+innerHeight/2;
-    mouse.z = 200*Math.random()-100;
-  //  console.log(x + ' ' + y);
-    }
+var mouse = new THREE.Vector3(0.0, 0.0, 0.0);
+
 var mouseV = new THREE.Vector3(0.0, 0.0, 0.0);
 var dx = new THREE.Vector3(0.0, 0.0, 0.0);
 
@@ -72,8 +75,8 @@ var attrib = new THREE.BufferAttribute(positions, 3);
 geometry.addAttribute('position', attrib);
 
 
-shaderMaterialForLine.transparent=true;
-shaderMaterial.transparent=true;
+shaderMaterialForLine.transparent = true;
+shaderMaterial.transparent = true;
 
 var line = new THREE.Line(geometry, shaderMaterialForLine);
 var point = new THREE.Points(geometry, shaderMaterial);
@@ -100,7 +103,7 @@ function update() { ///////why vector can't use=?
     mouseV.x = mouse.x;
     mouseV.y = mouse.y;
     mouseV.z = mouse.z;
-  //  n = noise(frame);
+    //  n = noise(frame);
     //  console.log(particles[0].pos);
     for (var i = 0; i < particles.length; i++) {
         //  var mouseTemp = mouseV;
@@ -152,7 +155,7 @@ function update() { ///////why vector can't use=?
     renderer.render(scene, camera);
     requestAnimationFrame(update);
     frame += 0.001;
-   //console.log(mouse.x+' '+mouse.y);
+    //console.log(mouse.x+' '+mouse.y);
     //i = 0;
 }
 
