@@ -52,12 +52,12 @@ window.show_coords = function(event) {
 
 var $ = require('jquery');
 var Particle = require('./particles.js');
-function touch (event){
+window.touch = function(event) {
     var event = event || window.event;
 
     var oInp = document.getElementById("inp");
 
-    switch(event.type){
+    switch (event.type) {
         case "touchstart":
             oInp.innerHTML = "Touch started (" + event.touches[0].clientX + "," + event.touches[0].clientY + ")";
             break;
@@ -72,9 +72,9 @@ function touch (event){
     mouse.x = event.touches[0].clientX - innerWidth / 2;
     mouse.y = -event.touches[0].clientY + innerHeight / 2;
     mouse.z = 200 * Math.random() - 100;
-alert(mouse.x);
+    alert(mouse.x);
 }
-alert(2);
+alert(3);
 $("body").on("touchstart", touch);
 $("body").on("touchend", touch);
 //var THREE = require('three');
