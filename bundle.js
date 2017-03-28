@@ -52,31 +52,35 @@ window.show_coords = function(event) {
 
 var $ = require('jquery');
 var Particle = require('./particles.js');
-window.touch = function(event) {
-    var event = event || window.event;
 
-    var oInp = document.getElementById("inp");
+function load() {
 
-    switch (event.type) {
-        case "touchstart":
-            oInp.innerHTML = "Touch started (" + event.touches[0].clientX + "," + event.touches[0].clientY + ")";
-            break;
-        case "touchend":
-            oInp.innerHTML = "<br>Touch end (" + event.changedTouches[0].clientX + "," + event.changedTouches[0].clientY + ")";
-            break;
-        case "touchmove":
-            event.preventDefault();
-            oInp.innerHTML = "<br>Touch moved (" + event.touches[0].clientX + "," + event.touches[0].clientY + ")";
-            break;
+    document.addEventListener('touchstart', touch, false);
+    document.addEventListener('touchmove', touch, false);
+    document.addEventListener('touchend', touch, false);
+
+    function touch(event) {
+        var event = event || window.event;
+
+        var oInp = document.getElementById("inp");
+
+        switch (event.type) {
+            case "touchstart":
+                oInp.innerHTML = "Touch started (" + event.touches[0].clientX + "," + event.touches[0].clientY + ")";
+                break;
+            case "touchend":
+                oInp.innerHTML = "<br>Touch end (" + event.changedTouches[0].clientX + "," + event.changedTouches[0].clientY + ")";
+                break;
+            case "touchmove":
+                event.preventDefault();
+                oInp.innerHTML = "<br>Touch moved (" + event.touches[0].clientX + "," + event.touches[0].clientY + ")";
+                break;
+        }
+        alert(1222);
+
     }
-    mouse.x = event.touches[0].clientX - innerWidth / 2;
-    mouse.y = -event.touches[0].clientY + innerHeight / 2;
-    mouse.z = 200 * Math.random() - 100;
-    alert(mouse.x);
 }
-alert(3);
-$("body").on("touchstart", touch);
-$("body").on("touchend", touch);
+window.addEventListener('load', load, false);
 //var THREE = require('three');
 var vShader = $('#vertexshader');
 var fShader = $('#fragmentshader');
