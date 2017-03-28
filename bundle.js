@@ -47,6 +47,7 @@ window.show_coords = function(event) {
 var $ = require('jquery');
 var Particle = require('./particles.js');
 $("body").on("touchmove", show_coords);
+$("body").on("touchstart", show_coords);
 
 //var THREE = require('three');
 var vShader = $('#vertexshader');
