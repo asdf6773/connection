@@ -43318,7 +43318,7 @@
 	</style>
 </head>
 
-<body id = "threejs"  style='overflow:hidden'>
+<body id = "threejs"  onmousemove ="show_coords(event)" style='overflow:hidden' >
 	<script type="x-shader/x-vertex" id="vertexshader">
 
 
@@ -43364,6 +43364,7 @@
 
 
 	</script>
+    
 	<script type="x-shader/x-fragment" id="fragmentshaderforline">
 
 		#ifdef GL_ES
@@ -43384,13 +43385,17 @@
 
 
 	</script>
+    <script src="bundle.js"></script>
 
+    <script>
+  
+    </script>
 	
 
 	<script>
 		// Our Javascript will go here.
 	</script>
 </body>
-	<script src="bundle.js"></script>
-
+    
+	
 </html>
