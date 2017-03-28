@@ -35,6 +35,11 @@ function Particle() {
 module.exports = Particle;
 },{}],2:[function(require,module,exports){
 //var camera = new THREE.OrthographicCamera(innerWidth / -2, innerWidth, innerHeight / 2, innerHeight / -2,1,1000) ////1
+var pMouseV = new THREE.Vector3(0.0, 0.0, 0.0);
+var mouse = new THREE.Vector3(0.0, 0.0, 0.0);
+
+var mouseV = new THREE.Vector3(0.0, 0.0, 0.0);
+
 window.show_coords = function(event) {
     //<body onmousemove ="show_coords(event)">
     x = event.clientX;
@@ -67,8 +72,9 @@ function touch (event){
     mouse.x = event.touches[0].clientX - innerWidth / 2;
     mouse.y = -event.touches[0].clientY + innerHeight / 2;
     mouse.z = 200 * Math.random() - 100;
-
+alert(mouse.x);
 }
+alert(mouse.x);
 $("body").on("touchstart", touch);
 
 //var THREE = require('three');
@@ -118,10 +124,7 @@ var MAX_POINTS = 20000;
 for (var i = 0; i < MAX_POINTS; i++) {
     particles.push(new Particle());
 }
-var pMouseV = new THREE.Vector3(0.0, 0.0, 0.0);
-var mouse = new THREE.Vector3(0.0, 0.0, 0.0);
 
-var mouseV = new THREE.Vector3(0.0, 0.0, 0.0);
 var dx = new THREE.Vector3(0.0, 0.0, 0.0);
 
 var frame = 0;
