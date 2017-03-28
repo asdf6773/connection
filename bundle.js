@@ -74,7 +74,7 @@ function touch (event){
     mouse.z = 200 * Math.random() - 100;
 alert(mouse.x);
 }
-alert(1);
+alert(2);
 $("body").on("touchstart", touch);
 $("body").on("touchend", touch);
 //var THREE = require('three');
