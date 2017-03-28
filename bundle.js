@@ -76,7 +76,7 @@ function touch(event) {
             oInp.innerHTML = "<br>Touch moved (" + event.touches[0].clientX + "," + event.touches[0].clientY + ")";
             break;
     }
-
+console.log(1);
 
 }
 
