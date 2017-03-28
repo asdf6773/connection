@@ -57,7 +57,7 @@ window.show_coords=function(event) {
     mouse.x = x-innerWidth/2;
     mouse.y = -y+innerHeight/2;
     mouse.z = 200*Math.random()-100;
-    console.log(x + ' ' + y);
+  //  console.log(x + ' ' + y);
     }
 var mouseV = new THREE.Vector3(0.0, 0.0, 0.0);
 var dx = new THREE.Vector3(0.0, 0.0, 0.0);
