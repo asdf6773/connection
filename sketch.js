@@ -18,8 +18,8 @@ window.show_coords = function(event) {
     //<body onmousemove ="show_coords(event)">
     x = event.clientX;
     y = event.clientY;
-    mouse.x = 200 * Math.random() - innerWidth / 2;
-    mouse.y = -200 * Math.random() + innerHeight / 2;
+    mouse.x = 200 * Math.random();
+    mouse.y =200 * Math.random();
     mouse.z = 200 * Math.random() - 100;
     //  console.log(x + ' ' + y);
 }
