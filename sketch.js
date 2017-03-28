@@ -1,7 +1,10 @@
 //var camera = new THREE.OrthographicCamera(innerWidth / -2, innerWidth, innerHeight / 2, innerHeight / -2,1,1000) ////1
-//var Noise = require('noisejs');
+var $ = require('jquery');
+var Particle = require('./particles.js');
+//var THREE = require('three');
 var vShader = $('#vertexshader');
 var fShader = $('#fragmentshader');
+var fShaderforline = $('#fragmentshaderforline');
 var uniforms = {
     amplitude: {
         type: 'float',
@@ -21,6 +24,11 @@ var shaderMaterial = new THREE.ShaderMaterial({ //6
     vertexShader: vShader.text(),
     fragmentShader: fShader.text()
 });
+var shaderMaterialForLine = new THREE.ShaderMaterial({ //6
+    uniforms: uniforms,
+    vertexShader: vShader.text(),
+    fragmentShader: fShaderforline.text()
+});
 var camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 10000) ////1
 camera.position.set(0, 0, 600);
 
@@ -36,7 +44,7 @@ const RADIUS = 50;
 const SEGMENTS = 10;
 const RINGS = 10;
 var particles = [];
-var MAX_POINTS =8000  ;
+var MAX_POINTS =20000  ;
 for (var i = 0; i < MAX_POINTS; i++) {
     particles.push(new Particle());
 }
@@ -58,24 +66,20 @@ function show_coords(event) {
 var frame = 0;
 var seed = 588.0; //
 var pushRad = 10;
-var vShader = $('#vertexshader');
-var fShader = $('#fragmentshader');
+
 var geometry = new THREE.BufferGeometry();
 var positions = new Float32Array(MAX_POINTS * 3);
 var attrib = new THREE.BufferAttribute(positions, 3);
 geometry.addAttribute('position', attrib);
 
 
-var material = new THREE.LineBasicMaterial({
-    color: new THREE.Color(Math.random(), Math.random(), Math.random()),
-    transparent: true,
-    opacity: 0.5,
-    linewidth: 3,
-});
+shaderMaterialForLine.transparent=true;
 shaderMaterial.transparent=true;
-material.blendEquation = THREE.AddEquation; //default
-line = new THREE.Line(geometry, shaderMaterial);
+
+var line = new THREE.Line(geometry, shaderMaterialForLine);
+var point = new THREE.Points(geometry, shaderMaterial);
 scene.add(line);
+scene.add(point);
 //console.log(line.geometry.attributes.position.needsUpdate);
 //console.log(line.material);
 positions = line.geometry.attributes.position.array;
@@ -136,10 +140,9 @@ function update() { ///////why vector can't use=?
     }
 
     //    material.color = new THREE.Color(Math.random(), Math.random(), Math.random());
-    material.opacity = 0.1;
 
 
-    line.material.needsUpdate = true; //default
+
     //  console.log(line.material);
 
     geometry.attributes.position.needsUpdate = true;

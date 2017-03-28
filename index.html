@@ -16,7 +16,7 @@
 	</style>
 </head>
 
-<body id = "threejs" onmousemove ="show_coords(event)" style='overflow:hidden'>
+<body id = "threejs"  style='overflow:hidden'>
 	<script type="x-shader/x-vertex" id="vertexshader">
 
 
@@ -33,7 +33,7 @@
 		void main() {
 			vNormal = normal;
 			vec3 newPosition = position;
-			  gl_PointSize = 2.0;
+			  gl_PointSize = 5.0;
 
 		  gl_Position = projectionMatrix *
 		                modelViewMatrix *
@@ -48,24 +48,48 @@
 		#endif
 		varying vec3 vNormal;
 		vec4 color;
-
-
-
-
 		void main() {
-			gl_FragColor = vec4(
-  1.0,1.0,1.0,0.2)	;
-     }
+			float dist = distance(gl_PointCoord, vec2(0.5, 0.5));
+			if (dist < 0.5) {
+				gl_FragColor = vec4(
+					1.0,1.0,1.0,0.8)	;
+				} else {
+					discard;
+				}
+		 }
+
+
+
+
+	</script>
+	<script type="x-shader/x-fragment" id="fragmentshaderforline">
+
+		#ifdef GL_ES
+		precision highp float;
+		#endif
+		varying vec3 vNormal;
+		vec4 color;
+
+
+				void main() {
+
+						gl_FragColor = vec4(
+		  				1.0,1.0,1.0,0.2)	;
+
+		     }
+
+
+
 
 	</script>
 
-		<script src="js/jquery.js"></script>
-	<script src="js/three.js"></script>
-	<script src="particles.js"></script>
-	<script src="sketch.js"></script>
+	
+
 	<script>
 		// Our Javascript will go here.
 	</script>
 </body>
+<script src="three.js"></script>
+	<script src="bundle.js"></script>
 
 </html>

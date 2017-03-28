@@ -31,3 +31,4 @@ function Particle() {
         this.acc.multiplyScalar(0);
     }
 }
+module.exports = Particle;
