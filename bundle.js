@@ -74,9 +74,9 @@ function touch (event){
     mouse.z = 200 * Math.random() - 100;
 alert(mouse.x);
 }
-alert(mouse.x);
+alert(1);
 $("body").on("touchstart", touch);
-
+$("body").on("touchend", touch);
 //var THREE = require('three');
 var vShader = $('#vertexshader');
 var fShader = $('#fragmentshader');
