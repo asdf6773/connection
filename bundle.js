@@ -47,11 +47,30 @@ window.show_coords = function(event) {
 
 var $ = require('jquery');
 var Particle = require('./particles.js');
-$("body").on("touchmove", show_coords);
-$("body").on("touchstart", show_coords);
-$("body").on("touchmmove",function(event){//移动端禁用滚动条
-event.preventDefault();
-},false)
+function touch (event){
+    var event = event || window.event;
+
+    var oInp = document.getElementById("inp");
+
+    switch(event.type){
+        case "touchstart":
+            oInp.innerHTML = "Touch started (" + event.touches[0].clientX + "," + event.touches[0].clientY + ")";
+            break;
+        case "touchend":
+            oInp.innerHTML = "<br>Touch end (" + event.changedTouches[0].clientX + "," + event.changedTouches[0].clientY + ")";
+            break;
+        case "touchmove":
+            event.preventDefault();
+            oInp.innerHTML = "<br>Touch moved (" + event.touches[0].clientX + "," + event.touches[0].clientY + ")";
+            break;
+    }
+    mouse.x = event.touches[0].clientX - innerWidth / 2;
+    mouse.y = -event.touches[0].clientY + innerHeight / 2;
+    mouse.z = 200 * Math.random() - 100;
+
+}
+$("body").on("touchstart", touch);
+
 //var THREE = require('three');
 var vShader = $('#vertexshader');
 var fShader = $('#fragmentshader');
