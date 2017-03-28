@@ -39,7 +39,7 @@ var pMouseV = new THREE.Vector3(0.0, 0.0, 0.0);
 var mouse = new THREE.Vector3(0.0, 0.0, 0.0);
 
 var mouseV = new THREE.Vector3(0.0, 0.0, 0.0);
-
+/*
 window.show_coords = function(event) {
     //<body onmousemove ="show_coords(event)">
     x = event.clientX;
@@ -49,7 +49,16 @@ window.show_coords = function(event) {
     mouse.z = 200 * Math.random() - 100;
     //  console.log(x + ' ' + y);
 }
-
+*/
+window.show_coords = function(event) {
+    //<body onmousemove ="show_coords(event)">
+    x = event.clientX;
+    y = event.clientY;
+    mouse.x = 200 * Math.random() - innerWidth / 2;
+    mouse.y = -200 * Math.random() + innerHeight / 2;
+    mouse.z = 200 * Math.random() - 100;
+    //  console.log(x + ' ' + y);
+}
 var $ = require('jquery');
 var Particle = require('./particles.js');
 
