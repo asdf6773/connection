@@ -42,7 +42,7 @@ function createApp(opt) {
         canvas: canvas,
         theta: (5) * (Math.PI) / 180,
         phi: -90 * Math.PI / 180,
-        distance: 600,
+        distance: 800,
         distanceBounds: [0, 50000]
     }, opt));
 
@@ -97,7 +97,7 @@ var pMouseV = new THREE.Vector3(0.0, 0.0, 0.0);
 var mouse = new THREE.Vector3(0.0, 0.0, 0.0);
 
 var mouseV = new THREE.Vector3(0.0, 0.0, 0.0);
-app.renderer.setClearColor('#ef9999', 1);
+app.renderer.setClearColor('#000000', 1);
 app.renderer.clearColor('#ffffff', 1);
 /*
 window.show_coords = function(event) {
