@@ -41,7 +41,7 @@ function createApp(opt) {
         canvas: canvas,
         theta: (5) * (Math.PI) / 180,
         phi: -90 * Math.PI / 180,
-        distance: 600,
+        distance: 800,
         distanceBounds: [0, 50000]
     }, opt));
 
