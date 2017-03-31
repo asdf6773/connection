@@ -36,6 +36,7 @@ function createApp(opt) {
     // 3D scene
     const scene = new THREE.Scene();
 
+
     // 3D orbit controller with damping
     const controls = createControls(assign({
         canvas: canvas,
@@ -68,6 +69,7 @@ function createApp(opt) {
 
         // update camera controls
         controls.update();
+        controls.zoomSpeed = 0.3;
       //  controls.damping =0.01;
         camera.position.fromArray(controls.position);
         camera.up.fromArray(controls.up);
