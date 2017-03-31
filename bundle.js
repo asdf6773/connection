@@ -195,7 +195,7 @@ const RADIUS = 50;
 const SEGMENTS = 10;
 const RINGS = 10;
 var particles = [];
-var MAX_POINTS = 10000;
+var MAX_POINTS = 15000;
 for (var i = 0; i < MAX_POINTS; i++) {
     particles.push(new Particle());
 }
