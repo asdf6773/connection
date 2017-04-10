@@ -106,8 +106,9 @@ const RADIUS = 50;
 const SEGMENTS = 10;
 const RINGS = 10;
 var particles = [];
-var MAX_POINTS = 15000;
-for (var i = 0; i < MAX_POINTS; i++) {
+var SINGLE_MAX_POINTS = 10;
+var MAX_TRAIL = 2;
+for (var i = 0; i < SINGLE_MAX_POINTS * MAX_TRAIL; i++) {
     particles.push(new Particle());
 }
 
@@ -118,35 +119,52 @@ var seed = 588.0; //
 var pushRad = 10;
 
 var geometry = new THREE.BufferGeometry();
-var positions = new Float32Array(MAX_POINTS * 3);
+var positions = new Float32Array(SINGLE_MAX_POINTS * MAX_TRAIL * 3);
 var attrib = new THREE.BufferAttribute(positions, 3);
 geometry.addAttribute('position', attrib);
-
+geometry.addAttribute('pp', new THREE.BufferAttribute(undefined, 3));
+//geometry.attributes.pp.array = positions;
+var pp = geometry.getAttribute('pp')
+pp.array = positions
+console.log(geometry);
 
 shaderMaterialForLine.transparent = true;
 shaderMaterial.transparent = true;
 
-var line = new THREE.Line(geometry, shaderMaterialForLine);
+var line = new THREE.LineSegments(geometry, shaderMaterialForLine);
 var point = new THREE.Points(geometry, shaderMaterial);
 app.scene.add(line);
 app.scene.add(point);
 //console.log(line.geometry.attributes.position.needsUpdate);
 //console.log(line.material);
+
 positions = line.geometry.attributes.position.array;
 var x = y = z = index = 0;
-for (var i = 0, l = MAX_POINTS; i < l; i++) {
-    //    opacity[i] = 0.5;
-    positions[index++] = particles[i].pos.x;
-    positions[index++] = particles[i].pos.y;
-    positions[index++] = particles[i].pos.z;
+for (var j = 0; j < MAX_TRAIL; j++) {
+    for (var i = 0; i < SINGLE_MAX_POINTS; i++) {
+        if (i % 2 == 0 && (j*SINGLE_MAX_POINTS+i)%SINGLE_MAX_POINTS != 0) {
+            positions[index++] = particles[j*SINGLE_MAX_POINTS+i - 1].pos.x;
+            positions[index++] = particles[j*SINGLE_MAX_POINTS+i - 1].pos.y;
+            positions[index++] = particles[j*SINGLE_MAX_POINTS+i - 1].pos.z;
+        } else if ((j*SINGLE_MAX_POINTS+i)%SINGLE_MAX_POINTS === 0) {
+            positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.x;
+            positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.y;
+            positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.z;
+        } else {
+            positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.x;
+            positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.y;
+            positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.z;
+        }
+    }
 }
+
 var n = 0;
 // draw range
 drawCount = 10000; // draw the first 2 points, only
 geometry.setDrawRange(0, drawCount);
 
 var cameraZ = 0;
-
+app.renderer.render(app.scene, app.camera);
 //--------------------------renderer-----------------------
 var time = 0;
 createLoop(function(dt) {
@@ -181,22 +199,33 @@ createLoop(function(dt) {
         A.update();
     }
     index = 0;
-    for (var i = 0, l = MAX_POINTS; i < l; i++) {
-        positions[index++] = particles[i].pos.x;
-        positions[index++] = particles[i].pos.y;
-        positions[index++] = particles[i].pos.z;
-
+    for (var j = 0; j < MAX_TRAIL; j++) {
+        for (var i = 0; i < SINGLE_MAX_POINTS; i++) {
+            if (i % 2 == 0 && (j*SINGLE_MAX_POINTS+i)%SINGLE_MAX_POINTS != 0) {
+                positions[index++] = particles[j*SINGLE_MAX_POINTS+i - 1].pos.x;
+                positions[index++] = particles[j*SINGLE_MAX_POINTS+i - 1].pos.y;
+                positions[index++] = particles[j*SINGLE_MAX_POINTS+i - 1].pos.z;
+            } else if ((j*SINGLE_MAX_POINTS+i)%SINGLE_MAX_POINTS === 0) {
+                positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.x;
+                positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.y;
+                positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.z;
+            } else {
+                positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.x;
+                positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.y;
+                positions[index++] = particles[j*SINGLE_MAX_POINTS+i].pos.z;
+            }
+        }
     }
     geometry.attributes.position.needsUpdate = true;
-    geometry.setDrawRange(0, MAX_POINTS);
+    geometry.setDrawRange(0, SINGLE_MAX_POINTS*MAX_TRAIL);
     pMouseV.x = mouseV.x;
     pMouseV.y = mouseV.y;
     pMouseV.z = mouseV.z;
     app.updateProjectionMatrix();
     app.renderer.render(app.scene, app.camera);
-app.frame+=0.1
-    console.log(app.frame)
-}).start();
+    app.frame += 0.1
+    //  console.log(app.frame)
+}) .start();
 
 // function update() { ///////why vector can't use=?
 //     mouse.x = 200 * Math.random();
@@ -236,7 +265,7 @@ app.frame+=0.1
 //     app.camera.position.set(600 * Math.cos(frame), 0, 600 * Math.sin(frame));
 //     app.camera.lookAt(new THREE.Vector3(0, 0, 0));
 //     cameraZ += 1;
-//     for (var i = 0, l = MAX_POINTS; i < l; i++) {
+//     for (var i = 0, l = SINGLE_MAX_POINTS; i < l; i++) {
 //         positions[index++] = particles[i].pos.x;
 //         positions[index++] = particles[i].pos.y;
 //         positions[index++] = particles[i].pos.z;
@@ -250,7 +279,7 @@ app.frame+=0.1
 //     //  console.log(line.material);
 //
 //     geometry.attributes.position.needsUpdate = true;
-//     geometry.setDrawRange(0, MAX_POINTS);
+//     geometry.setDrawRange(0, SINGLE_MAX_POINTS);
 //     pMouseV.x = mouseV.x;
 //     pMouseV.y = mouseV.y;
 //     pMouseV.z = mouseV.z;

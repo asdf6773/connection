@@ -30,7 +30,7 @@ function createApp(opt) {
     document.body.appendChild(canvas);
 
     // 3D camera looking
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.01, 1000);
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.01, 10000);
     const target = new THREE.Vector3();
 
     // 3D scene
@@ -66,7 +66,8 @@ function createApp(opt) {
         const width = window.innerWidth;
         const height = window.innerHeight;
         const aspect = width / height;
-
+controls.rotateSpeed =0.05
+controls.damping =  0.05;
         // update camera controls
         controls.update();
         controls.zoomSpeed = 0.3;

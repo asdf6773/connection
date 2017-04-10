@@ -31,7 +31,7 @@ function createApp(opt) {
     document.body.appendChild(canvas);
 
     // 3D camera looking
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.01, 1000);
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.01, 10000);
     const target = new THREE.Vector3();
 
     // 3D scene
@@ -67,7 +67,8 @@ function createApp(opt) {
         const width = window.innerWidth;
         const height = window.innerHeight;
         const aspect = width / height;
-
+controls.rotateSpeed =0.05
+controls.damping =  0.05;
         // update camera controls
         controls.update();
         controls.zoomSpeed = 0.3;
@@ -210,7 +211,7 @@ var geometry = new THREE.BufferGeometry();
 var positions = new Float32Array(MAX_POINTS * 3);
 var attrib = new THREE.BufferAttribute(positions, 3);
 geometry.addAttribute('position', attrib);
-
+console.log(attrib);
 
 shaderMaterialForLine.transparent = true;
 shaderMaterial.transparent = true;
@@ -284,7 +285,7 @@ createLoop(function(dt) {
     app.updateProjectionMatrix();
     app.renderer.render(app.scene, app.camera);
 app.frame+=0.1
-    console.log(app.frame)
+  //  console.log(app.frame)
 }).start();
 
 // function update() { ///////why vector can't use=?
